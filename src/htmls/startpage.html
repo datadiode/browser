@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <style>
+    div.ua-flag
+    {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 15000px;
+        border-top: 10px solid #005BBB;
+        border-bottom: 10px solid #FFD500;
+    }
+    </style>
     <title></title>
     <link rel="stylesheet" href="qrc:/startpage.css">
     <script>
@@ -43,6 +54,7 @@
     </script>
 </head>
 <body onload="document.forms[0].lineEdit.select(); update();">
+    <div class='ua-flag'></div>
     <div id="header">
         <h1 id="headerTitle"></h1>
         <img src="qrc:/endorphin.svg" alt="Endorphin">

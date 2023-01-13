@@ -18,10 +18,12 @@
  */
 
 #include "browserapplication.h"
+#include <qfont.h>
 
-#ifdef Q_OS_WIN
-#include "explorerstyle.h"
-#endif
+void qtMessageHandler(QtMsgType, const QMessageLogContext &, const QString &msg)
+{
+    puts(msg.toUtf8().data());
+}
 
 int main(int argc, char **argv)
 {
@@ -31,11 +33,15 @@ int main(int argc, char **argv)
     QApplication::setGraphicsSystem(QString::fromLatin1("raster"));
 #endif
     BrowserApplication application(argc, argv);
-    if (!application.isRunning())
-        return 0;
-#ifdef Q_OS_WIN
-    application.setStyle(new ExplorerStyle);
-#endif
+    QFont font = QGuiApplication::font();
+    font.setFamily("DejaVu sans");
+    font.setPointSize(14);
+    application.setFont(font, "QMenu");
+    application.setFont(font, "QMenuBar");
+    font.setPointSize(12);
+    application.setFont(font, "QTabBar");
+    qInstallMessageHandler(qtMessageHandler);
+    application.setAutoSipEnabled(true);
     application.newMainWindow();
     return application.exec();
 }
