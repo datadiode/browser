@@ -8,7 +8,8 @@ which Aaron Dewes created as a fork of the [Arora browser](https://github.com/Ar
 
 ## WARNING
 This project does not deliver a secure browser which is safe for browsing the internet.  
-Know your responsibilities when deploying to production.
+Read [Stop Using QtWebKit](https://blogs.gnome.org/mcatanzaro/2022/11/04/stop-using-qtwebkit/), and
+know your responsibilities when deploying to production.
 
 ## Contributing
 
