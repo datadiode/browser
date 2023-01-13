@@ -47,9 +47,9 @@ public:
         }
         return 0;
     }
-    static const CVersionData *Load(HMODULE hModule = 0, LPCTSTR lpszRes = MAKEINTRESOURCE(VS_VERSION_INFO))
+    static const CVersionData *Load(HMODULE hModule = 0, LPCWSTR lpszRes = MAKEINTRESOURCEW(VS_VERSION_INFO))
     {
-        if (HRSRC const hFindRes = FindResource(hModule, lpszRes, RT_VERSION))
+        if (HRSRC const hFindRes = FindResourceW(hModule, lpszRes, MAKEINTRESOURCEW(RT_VERSION)))
             if (HGLOBAL const hLoadRes = LoadResource(hModule, hFindRes))
                 return static_cast<const CVersionData *>(LockResource(hLoadRes));
         return 0;
