@@ -136,7 +136,9 @@ public slots:
 
 private slots:
     void retranslate();
+#ifndef QT_NO_LOCALSERVER
     void messageReceived(QLocalSocket *socket);
+#endif
     void postLaunch();
     void openUrl(const QUrl &url);
 

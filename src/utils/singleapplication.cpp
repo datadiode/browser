@@ -42,6 +42,8 @@
 
 // #define SINGALAPPLICATION_DEBUG
 
+#ifndef QT_NO_LOCALSERVER
+
 SingleApplication::SingleApplication(int &argc, char **argv)
     : QApplication(argc, argv)
     , m_localServer(0)
@@ -155,4 +157,6 @@ QString SingleApplication::serverName() const
 #endif
     return serverName;
 }
+
+#endif // QT_NO_LOCALSERVER
 

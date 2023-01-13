@@ -20,6 +20,7 @@ find_package(Qt5Script REQUIRED)
 
 add_definitions(-DQT_NO_PRINTDIALOG)
 add_definitions(-DQT_NO_CLIPBOARD)
+add_definitions(-DQT_NO_LOCALSERVER)
 if(NOT Qt5UiTools_FOUND)
 	add_definitions(-DQT_NO_UITOOLS)
 endif()

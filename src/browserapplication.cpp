@@ -111,6 +111,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 #endif
     ));
 
+#ifndef QT_NO_LOCALSERVER
 #ifndef AUTOTESTS
     connect(this, SIGNAL(messageReceived(QLocalSocket *)),
             this, SLOT(messageReceived(QLocalSocket *)));
@@ -133,6 +134,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     if (!startSingleServer())
         return;
 #endif
+#endif // QT_NO_LOCALSERVER 
 
 #if defined(Q_WS_MAC)
     QApplication::setQuitOnLastWindowClosed(false);
@@ -210,6 +212,7 @@ QString BrowserApplication::parseArgumentUrl(const QString &string) const
     return string;
 }
 
+#ifndef QT_NO_LOCALSOCKET
 void BrowserApplication::messageReceived(QLocalSocket *socket)
 {
     QString message;
@@ -279,6 +282,7 @@ void BrowserApplication::messageReceived(QLocalSocket *socket)
         return;
     }
 }
+#endif
 
 void BrowserApplication::quitBrowser()
 {

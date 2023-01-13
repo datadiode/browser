@@ -31,6 +31,8 @@
 
 #include <qapplication.h>
 
+#ifndef QT_NO_LOCALSERVER
+
 /*
     QApplication subclass that should be used when you only want one
     instant of the application to exist at a time.
@@ -59,6 +61,13 @@ private:
     QLocalServer *m_localServer;
 
 };
+
+#else
+
+typedef QApplication SingleApplication;
+
+#endif // QT_NO_LOCALSERVER
+
 
 #endif // SINGLEAPPLICATION_H
 
