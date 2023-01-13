@@ -92,9 +92,11 @@
 #include <qdesktopwidget.h>
 #include <qevent.h>
 #include <qfiledialog.h>
+#ifndef QT_NO_PRINTDIALOG
 #include <qprintdialog.h>
 #include <qprintpreviewdialog.h>
 #include <qprinter.h>
+#endif
 #include <qsettings.h>
 #include <qtextcodec.h>
 #include <qmenubar.h>
@@ -192,8 +194,10 @@ BrowserMainWindow::BrowserMainWindow(QWidget *parent, Qt::WindowFlags flags)
             m_autoSaver, SLOT(changeOccurred()));
     connect(m_tabWidget, SIGNAL(geometryChangeRequested(const QRect &)),
             this, SLOT(geometryChangeRequested(const QRect &)));
+#ifndef QT_NO_PRINTDIALOG
     connect(m_tabWidget, SIGNAL(printRequested(QWebFrame *)),
             this, SLOT(printRequested(QWebFrame *)));
+#endif
     connect(m_tabWidget, SIGNAL(menuBarVisibilityChangeRequested(bool)),
             menuBar(), SLOT(setVisible(bool)));
     connect(m_tabWidget, SIGNAL(statusBarVisibilityChangeRequested(bool)),
@@ -505,7 +509,7 @@ void BrowserMainWindow::setupMenu()
             bookmarksManager, SLOT(exportBookmarks()));
     m_fileMenu->addAction(m_fileExportBookmarksAction);
     m_fileMenu->addSeparator();
-
+#ifndef QT_NO_PRINTDIALOG
     m_filePrintPreviewAction= new QAction(m_fileMenu);
     connect(m_filePrintPreviewAction, SIGNAL(triggered()),
             this, SLOT(filePrintPreview()));
@@ -517,7 +521,7 @@ void BrowserMainWindow::setupMenu()
             this, SLOT(filePrint()));
     m_fileMenu->addAction(m_filePrintAction);
     m_fileMenu->addSeparator();
-
+#endif
     m_filePrivateBrowsingAction = new QAction(m_fileMenu);
     connect(m_filePrivateBrowsingAction, SIGNAL(triggered()),
             this, SLOT(privateBrowsing()));
@@ -935,8 +939,10 @@ void BrowserMainWindow::retranslate()
     m_fileSaveAsAction->setText(tr("&Save As..."));
     m_fileImportBookmarksAction->setText(tr("&Import Bookmarks..."));
     m_fileExportBookmarksAction->setText(tr("&Export Bookmarks..."));
+#ifndef QT_NO_PRINTDIALOG
     m_filePrintPreviewAction->setText(tr("P&rint Preview..."));
     m_filePrintAction->setText(tr("&Print..."));
+#endif
     m_filePrivateBrowsingAction->setText(tr("Private &Browsing..."));
     m_fileCloseWindow->setText(tr("Close Window"));
     m_fileQuit->setText(tr("&Quit"));
@@ -1209,29 +1215,35 @@ void BrowserMainWindow::fileOpen()
 
 void BrowserMainWindow::filePrintPreview()
 {
+#ifndef QT_NO_PRINTDIALOG
     if (!currentTab())
         return;
     QPrintPreviewDialog dialog(this);
     connect(&dialog, SIGNAL(paintRequested(QPrinter *)),
             currentTab(), SLOT(print(QPrinter *)));
     dialog.exec();
+#endif
 }
 
 void BrowserMainWindow::filePrint()
 {
+#ifndef QT_NO_PRINTDIALOG
     if (!currentTab())
         return;
     printRequested(currentTab()->page()->mainFrame());
+#endif
 }
 
 void BrowserMainWindow::printRequested(QWebFrame *frame)
 {
+#ifndef QT_NO_PRINTDIALOG
     QPrinter printer;
     QPrintDialog dialog(&printer, this);
     dialog.setWindowTitle(tr("Print Document"));
     if (dialog.exec() != QDialog::Accepted)
         return;
     frame->print(&printer);
+#endif
 }
 
 void BrowserMainWindow::privateBrowsing()

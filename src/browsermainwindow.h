@@ -182,8 +182,10 @@ private:
     QAction *m_fileSaveAsAction;
     QAction *m_fileImportBookmarksAction;
     QAction *m_fileExportBookmarksAction;
+#ifndef QT_NO_PRINTDIALOG
     QAction *m_filePrintPreviewAction;
     QAction *m_filePrintAction;
+#endif
     QAction *m_filePrivateBrowsingAction;
     QAction *m_fileCloseWindow;
     QAction *m_fileQuit;
