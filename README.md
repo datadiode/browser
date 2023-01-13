@@ -1,10 +1,14 @@
-# Endorphin web browser
+# Fork of the Endorphin web browser to target WEC2013
 [![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
 Endorphin is a cross platform web browser built using Qt and WebKit.
 
-This is a fork of the [Arora browser](https://github.com/Arora/arora).
-This fork was created by Aaron Dewes.
+This is a fork of the [Endorphin browser](https://github.com/EndorphinBrowser/browser),
+which Aaron Dewes created as a fork of the [Arora browser](https://github.com/Arora/arora).
+
+## WARNING
+This project does not deliver a secure browser which is safe for browsing the internet.  
+Know your responsibilities when deploying to production.
 
 ## Contributing
 
