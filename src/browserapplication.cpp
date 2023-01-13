@@ -88,6 +88,7 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
+#include "VersionData.h"
 #endif
 
 // #define BROWSERAPPLICATION_DEBUG
@@ -105,11 +106,16 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 {
     QCoreApplication::setOrganizationDomain(QLatin1String("aarondewes.github.io/endorphin/"));
     QCoreApplication::setApplicationName(QLatin1String("Endorphin"));
+#ifdef Q_OS_WIN
+    if (CVersionData const *const pvd = CVersionData::Load()->Find(L"StringFileInfo")->First()->Find(L"ProductVersion"))
+        QCoreApplication::setApplicationVersion(QString::fromUtf16(reinterpret_cast<const ushort *>(pvd->Data())));
+#else
     QCoreApplication::setApplicationVersion(QLatin1String("0.12.1"
 #ifdef GITVERSION
     " (Git: " GITCHANGENUMBER " " GITVERSION ")"
 #endif
     ));
+#endif
 
 #ifndef QT_NO_LOCALSERVER
 #ifndef AUTOTESTS
