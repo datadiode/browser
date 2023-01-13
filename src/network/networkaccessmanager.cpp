@@ -265,7 +265,11 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
         QSslCertificate const cert = error.at(i).certificate();
         if (ca_merge.contains(cert))
             continue;
-        errorStrings += error.at(i).errorString();
+        if (errorStrings.count() < 2) {
+            errorStrings += error.at(i).errorString();
+        } else if (errorStrings.count() == 2) {
+            errorStrings += tr("%1 more error(s)").arg(error.count() - errorStrings.count());
+        }
         if (!cert.isNull()) {
             ca_new.append(cert);
             detailedText += QLatin1String("Thumbprint: ");
@@ -282,15 +286,14 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
     QString errors = errorStrings.join(QLatin1String("</li><li>"));
     QMessageBox msgbox(QMessageBox::Warning,
                            QCoreApplication::applicationName() + tr(" - SSL Errors"),
-                           tr("<qt>SSL Errors:"
-                              "<br/><br/>for: <tt>%1</tt>"
+                           tr("<qt>SSL Errors for: <tt>%1</tt>"
                               "<ul><li>%2</li></ul>\n\n"
-                              "Do you want to ignore these errors?</qt>").arg(reply->url().toString()).arg(errors),
+                              "Do you want to ignore these errors?</qt>").arg(reply->url().host()).arg(errors),
                            QMessageBox::Yes | QMessageBox::No,
                            mainWindow);
     msgbox.setDefaultButton(QMessageBox::No);
     msgbox.setDetailedText(detailedText);
-    msgbox.setStyleSheet("QTextEdit{min-width: 620px;}");
+    msgbox.setStyleSheet("QPushButton{min-width: 175px;}");
     msgbox.setCheckBox(new QCheckBox(tr("Import certificate to trust list")));
     msgbox.checkBox()->setDisabled(ca_new.count() == 0);
     int ret = msgbox.exec();
