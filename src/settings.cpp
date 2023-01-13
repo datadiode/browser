@@ -184,6 +184,9 @@ void SettingsDialog::loadFromSettings()
     m_fixedFont = settings.value(QLatin1String("fixedFont"), m_fixedFont).value<QFont>();
     m_standardFont = settings.value(QLatin1String("standardFont"), m_standardFont).value<QFont>();
 
+    retainMenuBarWhileInFullscreen->setChecked(settings.value(QLatin1String("retainMenuBarWhileInFullscreen")).toBool());
+    retainStatusBarWhileInFullscreen->setChecked(settings.value(QLatin1String("retainStatusBarWhileInFullscreen")).toBool());
+
     standardLabel->setText(QString(QLatin1String("%1 %2")).arg(m_standardFont.family()).arg(m_standardFont.pointSize()));
     fixedLabel->setText(QString(QLatin1String("%1 %2")).arg(m_fixedFont.family()).arg(m_fixedFont.pointSize()));
 
@@ -327,6 +330,9 @@ void SettingsDialog::saveToSettings()
     settings.beginGroup(QLatin1String("websettings"));
     settings.setValue(QLatin1String("fixedFont"), m_fixedFont);
     settings.setValue(QLatin1String("standardFont"), m_standardFont);
+
+    settings.setValue(QLatin1String("retainMenuBarWhileInFullscreen"), blockPopupWindows->isChecked());
+    settings.setValue(QLatin1String("retainStatusBarWhileInFullscreen"), retainStatusBarWhileInFullscreen->isChecked());
 
     settings.setValue(QLatin1String("blockPopupWindows"), blockPopupWindows->isChecked());
     settings.setValue(QLatin1String("enableJavascript"), enableJavascript->isChecked());

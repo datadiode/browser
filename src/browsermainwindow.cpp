@@ -1385,8 +1385,12 @@ void BrowserMainWindow::viewFullScreen(bool makeFullScreen)
         setUnifiedTitleAndToolBarOnMac(false);
         setWindowState(windowState() | Qt::WindowFullScreen);
 
-        menuBar()->hide();
-        statusBar()->hide();
+        QSettings settings;
+        settings.beginGroup(QLatin1String("websettings"));
+        if (!settings.value(QLatin1String("retainMenuBarWhileInFullscreen")).toBool())
+            menuBar()->hide();
+        if (!settings.value(QLatin1String("retainStatusBarWhileInFullscreen")).toBool())
+            statusBar()->hide();
     } else {
         setWindowState(windowState() & ~Qt::WindowFullScreen);
 
