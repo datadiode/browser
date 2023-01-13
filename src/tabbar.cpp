@@ -236,10 +236,12 @@ void TabBar::mouseReleaseEvent(QMouseEvent *event)
         if (index != -1) {
             emit closeTab(index);
             return;
+#ifndef QT_NO_CLIPBOARD
         } else {
             QUrl url(QApplication::clipboard()->text(QClipboard::Selection));
             if (!url.isEmpty() && url.isValid() && !url.scheme().isEmpty())
                 emit loadUrl(url, TabWidget::NewTab);
+#endif
         }
     }
 

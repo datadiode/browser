@@ -472,6 +472,7 @@ void HistoryDialog::open()
 
 void HistoryDialog::copy()
 {
+#ifndef QT_NO_CLIPBOARD
     QModelIndex index = tree->currentIndex();
     if (!index.parent().isValid())
         return;
@@ -479,6 +480,7 @@ void HistoryDialog::copy()
 
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(url);
+#endif
 }
 #endif
 HistoryFilterModel::HistoryFilterModel(QAbstractItemModel *sourceModel, QObject *parent)

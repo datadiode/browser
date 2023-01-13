@@ -319,9 +319,11 @@ void WebView::copyImageToClipboard()
 
 void WebView::copyImageLocationToClipboard()
 {
+#ifndef QT_NO_CLIPBOARD
     if (QAction *action = qobject_cast<QAction*>(sender())) {
         BrowserApplication::clipboard()->setText(action->data().toString());
     }
+#endif
 }
 
 void WebView::blockImage()
@@ -622,6 +624,7 @@ void WebView::mouseReleaseEvent(QMouseEvent *event)
 {
     const bool isAccepted = event->isAccepted();
     m_page->event(event);
+#ifndef QT_NO_CLIPBOARD
     if (!event->isAccepted()
         && (BrowserApplication::instance()->eventMouseButtons() & Qt::MidButton)) {
         QUrl url(QApplication::clipboard()->text(QClipboard::Selection));
@@ -630,6 +633,7 @@ void WebView::mouseReleaseEvent(QMouseEvent *event)
             loadUrl(url);
         }
     }
+#endif
     event->setAccepted(isAccepted);
 }
 
