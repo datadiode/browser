@@ -34,7 +34,6 @@
 #include "networkcookiejar.h"
 #include "networkcookiejar_p.h"
 #include "twoleveldomains_p.h"
-#include <QDataStream>
 
 //#define NETWORKCOOKIEJAR_DEBUG
 
