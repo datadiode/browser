@@ -270,7 +270,7 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
         } else if (errorStrings.count() == 2) {
             errorStrings += tr("%1 more error(s)").arg(error.count() - errorStrings.count());
         }
-        if (!cert.isNull()) {
+        if (!cert.isNull() && !ca_new.contains(cert)) {
             ca_new.append(cert);
             detailedText += QLatin1String("Thumbprint: ");
             detailedText += cert.digest(QCryptographicHash::Sha1).toHex().toUpper();
@@ -294,7 +294,9 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
     msgbox.setDefaultButton(QMessageBox::No);
     msgbox.setDetailedText(detailedText);
     msgbox.setStyleSheet("QPushButton{min-width: 175px;}");
-    msgbox.setCheckBox(new QCheckBox(tr("Import certificate to trust list")));
+    msgbox.setCheckBox(new QCheckBox(
+        ca_new.count() < 2 ? tr("Import certificate to trust list") :
+        tr("Import %1 certificates to trust list").arg(ca_new.count())));
     msgbox.checkBox()->setDisabled(ca_new.count() == 0);
     int ret = msgbox.exec();
     if (ret == QMessageBox::Yes) {
