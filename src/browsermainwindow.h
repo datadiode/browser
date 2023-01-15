@@ -87,6 +87,13 @@ class BrowserMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
+#ifdef _WIN32_WCE
+    static bool const PreferFullscreen = true;
+#else
+    static bool const PreferFullscreen = false;
+#endif
+
     BrowserMainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~BrowserMainWindow();
     QSize sizeHint() const;

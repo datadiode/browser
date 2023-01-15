@@ -184,8 +184,8 @@ void SettingsDialog::loadFromSettings()
     m_fixedFont = settings.value(QLatin1String("fixedFont"), m_fixedFont).value<QFont>();
     m_standardFont = settings.value(QLatin1String("standardFont"), m_standardFont).value<QFont>();
 
-    retainMenuBarWhileInFullscreen->setChecked(settings.value(QLatin1String("retainMenuBarWhileInFullscreen")).toBool());
-    retainStatusBarWhileInFullscreen->setChecked(settings.value(QLatin1String("retainStatusBarWhileInFullscreen")).toBool());
+    retainMenuBarWhileInFullscreen->setChecked(settings.value(QLatin1String("retainMenuBarWhileInFullscreen"), BrowserMainWindow::PreferFullscreen).toBool());
+    retainStatusBarWhileInFullscreen->setChecked(settings.value(QLatin1String("retainStatusBarWhileInFullscreen"), BrowserMainWindow::PreferFullscreen).toBool());
 
     standardLabel->setText(QString(QLatin1String("%1 %2")).arg(m_standardFont.family()).arg(m_standardFont.pointSize()));
     fixedLabel->setText(QString(QLatin1String("%1 %2")).arg(m_fixedFont.family()).arg(m_fixedFont.pointSize()));

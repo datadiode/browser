@@ -283,7 +283,8 @@ void BrowserMainWindow::loadDefaultState()
     QSettings settings;
     settings.beginGroup(QLatin1String("BrowserMainWindow"));
     QByteArray data = settings.value(QLatin1String("defaultState")).toByteArray();
-    restoreState(data);
+    if (!restoreState(data))
+        viewFullScreen(PreferFullscreen);
     settings.endGroup();
 }
 
@@ -391,7 +392,7 @@ bool BrowserMainWindow::restoreState(const QByteArray &state)
         stream >> qMainWindowState;
     } else {
         maximized = false;
-        fullScreen = false;
+        fullScreen = PreferFullscreen;
         showMenuBar = true;
         m_statusBarVisible = showStatusbar;
     }
@@ -535,10 +536,12 @@ void BrowserMainWindow::setupMenu()
     m_fileMenu->addAction(m_fileCloseWindow);
 
     m_fileQuit = new QAction(m_fileMenu);
+#ifndef _WIN32
     int kdeSessionVersion = QString::fromLocal8Bit(qgetenv("KDE_SESSION_VERSION")).toInt();
     if (kdeSessionVersion != 0)
         connect(m_fileQuit, SIGNAL(triggered()), this, SLOT(close()));
     else
+#endif
         connect(m_fileQuit, SIGNAL(triggered()), BrowserApplication::instance(), SLOT(quitBrowser()));
     m_fileQuit->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
     m_fileMenu->addAction(m_fileQuit);
@@ -877,6 +880,22 @@ void BrowserMainWindow::setupMenu()
     m_helpAboutQtAction->setIcon(QPixmap(QLatin1String(":/trolltech/qmessagebox/images/qtlogo-64.png")));
     m_helpAboutApplicationAction->setIcon(windowIcon());
 #endif
+
+    // Add a Close symbol to the right end of the menu bar (convenient in fullscreen mode with menu bar visible)
+    QMenuBar *const bar = new QMenuBar(menuBar());
+    bar->setFont(QApplication::font("QMenuBar"));
+    int const height = bar->fontMetrics().height();
+    bar->setStyleSheet(QString(QLatin1String("QMenuBar { icon-size: %1px; }")).arg(height));
+    QAction *const action = new QAction(QIcon(QLatin1String(":graphics/closetab.png")), "", bar);
+    bar->addAction(action);
+#ifndef _WIN32
+    int kdeSessionVersion = QString::fromLocal8Bit(qgetenv("KDE_SESSION_VERSION")).toInt();
+    if (kdeSessionVersion != 0)
+        connect(action, SIGNAL(triggered()), this, SLOT(close()));
+    else
+#endif
+        connect(action, SIGNAL(triggered()), BrowserApplication::instance(), SLOT(quitBrowser()));
+    menuBar()->setCornerWidget(bar);
 }
 
 void BrowserMainWindow::aboutToShowViewMenu()
@@ -1387,9 +1406,9 @@ void BrowserMainWindow::viewFullScreen(bool makeFullScreen)
 
         QSettings settings;
         settings.beginGroup(QLatin1String("websettings"));
-        if (!settings.value(QLatin1String("retainMenuBarWhileInFullscreen")).toBool())
+        if (!settings.value(QLatin1String("retainMenuBarWhileInFullscreen"), PreferFullscreen).toBool())
             menuBar()->hide();
-        if (!settings.value(QLatin1String("retainStatusBarWhileInFullscreen")).toBool())
+        if (!settings.value(QLatin1String("retainStatusBarWhileInFullscreen"), PreferFullscreen).toBool())
             statusBar()->hide();
     } else {
         setWindowState(windowState() & ~Qt::WindowFullScreen);
