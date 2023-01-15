@@ -247,7 +247,9 @@ private:
     QAction *m_adBlockDialogAction;
 
     QMenu *m_helpMenu;
+#ifndef _WIN32_WCE
     QAction *m_helpChangeLanguageAction;
+#endif
     QAction *m_helpAboutQtAction;
     QAction *m_helpAboutApplicationAction;
 

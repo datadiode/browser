@@ -858,13 +858,13 @@ void BrowserMainWindow::setupMenu()
     // Help
     m_helpMenu = new QMenu(menuBar());
     menuBar()->addMenu(m_helpMenu);
-
+#ifndef _WIN32_WCE
     m_helpChangeLanguageAction = new QAction(m_helpMenu);
     connect(m_helpChangeLanguageAction, SIGNAL(triggered()),
             BrowserApplication::languageManager(), SLOT(chooseNewLanguage()));
     m_helpMenu->addAction(m_helpChangeLanguageAction);
     m_helpMenu->addSeparator();
-
+#endif
     m_helpAboutQtAction = new QAction(m_helpMenu);
     connect(m_helpAboutQtAction, SIGNAL(triggered()),
             qApp, SLOT(aboutQt()));
@@ -1019,7 +1019,9 @@ void BrowserMainWindow::retranslate()
     m_adBlockDialogAction->setText(tr("&Ad Block..."));
 
     m_helpMenu->setTitle(tr("&Help"));
+#ifndef _WIN32_WCE
     m_helpChangeLanguageAction->setText(tr("Switch application language "));
+#endif
     m_helpAboutQtAction->setText(tr("About &Qt"));
     m_helpAboutApplicationAction->setText(tr("About &%1", "About Browser").arg(QApplication::applicationName()));
 

@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 #endif
     BrowserApplication application(argc, argv);
     QFont font = QGuiApplication::font();
-    font.setFamily("DejaVu sans");
+    font.setFamily("Segoe UI");
     font.setPointSize(14);
     application.setFont(font, "QMenu");
     application.setFont(font, "QMenuBar");
