@@ -18,7 +18,50 @@
  */
 
 #include "browserapplication.h"
-#include <qfont.h>
+#include "browsermainwindow.h"
+#include "tabwidget.h"
+
+#ifdef Q_OS_WIN
+
+class SingleInstance : public QWidget
+{
+public:
+    bool reuse()
+    {
+        static WCHAR const guid[] = L"{a046f5bf-c03c-44bc-abeb-b0d265db3007}";
+        if (CreateEventW(NULL, FALSE, FALSE, guid) && GetLastError() == ERROR_ALREADY_EXISTS) {
+            QStringList args = QCoreApplication::arguments();
+            if (HWND const hwnd = FindWindowW(NULL, guid)) {
+                if (args.count() > 1) {
+                    QString url = BrowserApplication::parseArgumentUrl(args.last());
+                    COPYDATASTRUCT const cds = { 0, url.count() * sizeof(QChar), url.data() };
+                    DWORD_PTR dwResult;
+                    SendMessageTimeout(hwnd, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cds), SMTO_NORMAL, 5000, &dwResult);
+                }
+                SetForegroundWindow(hwnd);
+            }
+            return true;
+        }
+        SetWindowTextW(reinterpret_cast<HWND>(winId()), guid);
+        return false;
+    }
+    bool nativeEvent(const QByteArray &eventType, void *message, long *result)
+    {
+        MSG *const msg = static_cast<MSG *>(message);
+        if (msg->message == WM_COPYDATA) {
+            COPYDATASTRUCT *const cds = reinterpret_cast<COPYDATASTRUCT *>(msg->lParam);
+            QString const url(static_cast<QChar *>(cds->lpData), cds->cbData / sizeof(QChar));
+            QSettings settings;
+            settings.beginGroup(QLatin1String("tabs"));
+            TabWidget::OpenUrlIn tab = TabWidget::OpenUrlIn(settings.value(QLatin1String("openLinksFromAppsIn"), TabWidget::NewSelectedTab).toInt());
+            settings.endGroup();
+            BrowserApplication::instance()->mainWindow()->tabWidget()->loadString(url, tab);
+        }
+        return false;
+    }
+};
+
+#endif
 
 void qtMessageHandler(QtMsgType, const QMessageLogContext &, const QString &msg)
 {
@@ -33,6 +76,12 @@ int main(int argc, char **argv)
     QApplication::setGraphicsSystem(QString::fromLatin1("raster"));
 #endif
     BrowserApplication application(argc, argv);
+    qInstallMessageHandler(qtMessageHandler);
+#ifdef Q_OS_WIN
+    SingleInstance singleInstance;
+    if (singleInstance.reuse())
+        return 0;
+#endif
     QFont font = QGuiApplication::font();
     font.setFamily("Segoe UI");
     font.setPointSize(14);
@@ -40,7 +89,6 @@ int main(int argc, char **argv)
     application.setFont(font, "QMenuBar");
     font.setPointSize(12);
     application.setFont(font, "QTabBar");
-    qInstallMessageHandler(qtMessageHandler);
     application.setAutoSipEnabled(true);
     application.newMainWindow();
     return application.exec();

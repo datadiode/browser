@@ -107,6 +107,7 @@ public:
 
     static QString installedDataDirectory();
     static QString dataFilePath(const QString &fileName);
+    static QString parseArgumentUrl(const QString &string);
 
     Qt::MouseButtons eventMouseButtons() const;
     Qt::KeyboardModifiers eventKeyboardModifiers() const;
@@ -147,7 +148,6 @@ signals:
     void privacyChanged(bool isPrivate);
 
 private:
-    QString parseArgumentUrl(const QString &string) const;
     void clean();
 
     static HistoryManager *s_historyManager;

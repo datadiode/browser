@@ -209,7 +209,7 @@ void BrowserApplication::retranslate()
 
 // The only special property of an argument url is that the file's
 // can be local, they don't have to be absolute.
-QString BrowserApplication::parseArgumentUrl(const QString &string) const
+QString BrowserApplication::parseArgumentUrl(const QString &string)
 {
     if (QFile::exists(string)) {
         QFileInfo info(string);
