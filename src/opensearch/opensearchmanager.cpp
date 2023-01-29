@@ -297,7 +297,7 @@ void OpenSearchManager::restoreDefaults()
 
 QString OpenSearchManager::enginesDirectory() const
 {
-    QDir directory(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/data/Endorphin");
+    QDir directory(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/data");
     return directory.filePath(QLatin1String("searchengines"));
 }
 

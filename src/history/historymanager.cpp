@@ -80,7 +80,7 @@
 // Fix so we don't have to include browserapplication. Reduces the size.
 QString  HistoryManager::dataFilePath(const QString &fileName)
 {
-    QString directory = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/data/Endorphin";
+    QString directory = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/data";
     if (!QFile::exists(directory)) {
         QDir dir;
         dir.mkpath(directory);

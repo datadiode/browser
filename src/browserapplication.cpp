@@ -675,7 +675,7 @@ QString BrowserApplication::installedDataDirectory()
 
 QString BrowserApplication::dataFilePath(const QString &fileName)
 {
-    QString directory = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/data/Endorphin";
+    QString directory = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/data";
     if (directory.isEmpty())
         directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
     if (!QFile::exists(directory)) {

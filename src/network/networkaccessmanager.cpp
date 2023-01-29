@@ -248,7 +248,7 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
     BrowserMainWindow *mainWindow = BrowserApplication::instance()->mainWindow();
 
 #ifdef _WIN32_WCE
-    QSettings settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/knownhosts.ini", QSettings::IniFormat);
+    QSettings settings(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/knownhosts.ini", QSettings::IniFormat);
 #else
     QSettings settings;
     settings.beginGroup(QLatin1String("knownhosts"));
