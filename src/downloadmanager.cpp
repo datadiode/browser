@@ -167,7 +167,7 @@ void DownloadItem::getFileName()
     QString fileName = defaultFileName;
     if (m_requestFileName) {
         m_gettingFileName = true;
-        fileName = QFileDialog::getSaveFileName(this, tr("Save File"), defaultFileName);
+        fileName = QFileDialog::getSaveFileName(this, tr("Save File"), defaultFileName, tr("All files (*.*)"));
         m_gettingFileName = false;
         if (fileName.isEmpty()) {
             progressBar->setVisible(false);
