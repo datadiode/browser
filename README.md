@@ -25,3 +25,9 @@ For more detailed information see the [Building guide](BUILDING.md).
 ![endorphin-welcome-page](https://user-images.githubusercontent.com/10423465/211192045-00672b4f-7c96-4e01-b8cc-bfa5c3ccda14.png)
 
 ![endorphin-html5-test](https://user-images.githubusercontent.com/10423465/211192171-dd9c37ae-8696-4396-8e84-e84c3aee34dd.png)
+
+#### Impact of JavaScript execution performance in a user scenario involving a SIMATIC RF600 family UHF RFID Reader
+
+![switch-between-start-page-and-tag-monitor-endorphin-gifgit-freeconvert](https://user-images.githubusercontent.com/10423465/216931503-20111779-366e-48c2-963e-8959166a3881.gif)
+
+![switch-between-start-page-and-tag-monitor-zetakey-gifgit-freeconvert](https://user-images.githubusercontent.com/10423465/216931811-fcb4fa51-ec8d-49f4-b11f-e7a178c2606e.gif)
