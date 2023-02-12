@@ -93,6 +93,15 @@
 
 // #define BROWSERAPPLICATION_DEBUG
 
+// excerpted from qtWebKit/Source/JavaScriptCore/runtime/Options.h
+namespace JSC {
+    class Options {
+    public:
+        static bool setOption(const char *);
+        static void dumpAllOptions(FILE *);
+    };
+};
+
 DownloadManager *BrowserApplication::s_downloadManager = 0;
 HistoryManager *BrowserApplication::s_historyManager = 0;
 NetworkAccessManager *BrowserApplication::s_networkAccessManager = 0;
@@ -103,6 +112,7 @@ AutoFillManager *BrowserApplication::s_autoFillManager = 0;
 BrowserApplication::BrowserApplication(int &argc, char **argv)
     : SingleApplication(argc, argv)
     , quitting(false)
+    , jscoptions(false)
 {
     QCoreApplication::setOrganizationDomain(QLatin1String("aarondewes.github.io/endorphin/"));
     QCoreApplication::setApplicationName(QLatin1String("Endorphin"));
@@ -176,6 +186,11 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 
 BrowserApplication::~BrowserApplication()
 {
+    if (jscoptions) {
+        // once again, to see if something changed behind the scenes
+        JSC::Options::dumpAllOptions(stdout);
+        fflush(stdout);
+    }
     quitting = true;
     delete s_downloadManager;
     qDeleteAll(m_mainWindows);
@@ -330,6 +345,17 @@ void BrowserApplication::postLaunch()
     QWebSettings::setIconDatabasePath(directory);
 
     loadSettings();
+
+    QFile inputFile(QCoreApplication::applicationDirPath() + "/jscoptions.ini");
+    if (inputFile.open(QIODevice::ReadOnly)) {
+        QTextStream in(&inputFile);
+        while (!in.atEnd())
+            JSC::Options::setOption(in.readLine().toUtf8().data());
+        inputFile.close();
+        jscoptions = true;
+        JSC::Options::dumpAllOptions(stdout);
+        fflush(stdout);
+    }
 
     // newMainWindow() needs to be called in main() for this to happen
     if (m_mainWindows.count() > 0) {
