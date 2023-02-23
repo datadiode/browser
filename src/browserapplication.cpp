@@ -186,11 +186,6 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 
 BrowserApplication::~BrowserApplication()
 {
-    if (jscoptions) {
-        // once again, to see if something changed behind the scenes
-        JSC::Options::dumpAllOptions(stdout);
-        fflush(stdout);
-    }
     quitting = true;
     delete s_downloadManager;
     qDeleteAll(m_mainWindows);
@@ -331,6 +326,13 @@ void BrowserApplication::quitBrowser()
     }
 
     saveSession();
+
+    if (jscoptions) {
+        // once again, to see if something changed behind the scenes
+        JSC::Options::dumpAllOptions(stdout);
+        fflush(stdout);
+    }
+
     ::exit(0); // desperately ensure to not leave a zombie process, as occasionally observed with Qt's exit()
 }
 
