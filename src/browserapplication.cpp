@@ -331,7 +331,7 @@ void BrowserApplication::quitBrowser()
     }
 
     saveSession();
-    exit(0);
+    ::exit(0); // desperately ensure to not leave a zombie process, as occasionally observed with Qt's exit()
 }
 
 /*!
