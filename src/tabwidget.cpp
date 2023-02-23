@@ -1052,9 +1052,10 @@ bool TabWidget::restoreState(const QByteArray &state)
     QList<QByteArray> tabHistory;
     stream >> tabHistory;
 
+    QUrl url = currentWebView()->url();
+    TabWidget::OpenUrlIn tab = url.isEmpty() || url == QUrl(QLatin1String("qrc:/startpage.html")) ? CurrentTab : NewTab;
     for (int i = 0; i < openTabs.count(); ++i) {
-        QUrl url = QUrl::fromEncoded(openTabs.at(i).toUtf8());
-        TabWidget::OpenUrlIn tab = i == 0 && currentWebView()->url() == QUrl() ? CurrentTab : NewTab;
+        url = QUrl::fromEncoded(openTabs.at(i).toUtf8());
         QByteArray historyState = tabHistory.value(i);
         if (!historyState.isEmpty()) {
             createTab(historyState, tab);
@@ -1062,7 +1063,7 @@ bool TabWidget::restoreState(const QByteArray &state)
             if (WebView *webView = getView(tab, currentWebView()))
                 webView->loadUrl(url);
         }
-
+        tab = NewTab;
     }
     return true;
 }
