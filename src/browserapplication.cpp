@@ -325,7 +325,7 @@ void BrowserApplication::quitBrowser()
         }
     }
 
-    saveSession();
+    mainWindow()->save(); // implies saveSession()
 
     if (jscoptions) {
         // once again, to see if something changed behind the scenes
