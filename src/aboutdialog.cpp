@@ -30,6 +30,21 @@
 #include <qtwebkitversion.h>
 #include <qwebkitglobal.h>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#include "VersionData.h"
+static QString qWolfSSLVersion()
+{
+    QString version;
+    if (HMODULE const h = GetModuleHandleW(L"wolfssl.dll"))
+        if (CVersionData const *const pvd = CVersionData::Load(h)->Find(L"StringFileInfo")->First()->Find(L"ProductVersion"))
+            version = QString::fromUtf16(reinterpret_cast<const ushort *>(pvd->Data()));
+    return version;
+}
+#else
+typedef QString qWolfSSLVersion;
+#endif
+
 AboutDialog::AboutDialog(QWidget *parent)
     : QDialog(parent)
 {
@@ -38,7 +53,11 @@ AboutDialog::AboutDialog(QWidget *parent)
     logo->setPixmap(qApp->windowIcon().pixmap(128, 128));
     name->setText(qApp->applicationName());
     version->setText(qApp->applicationVersion());
-    webkitVersion->setText(tr("WebKit version: %1").arg(qWebKitVersion()));
+    QStringList versions;
+    versions += tr("WebKit version: %1").arg(qWebKitVersion());
+    versions += tr("wolfSSL version: %1").arg(qWolfSSLVersion());
+    static char16_t const separator[] = { 0x20, 0x2022, 0x20 };
+    webkitVersion->setText(versions.join(QString::fromUtf16(separator)));
     connect(authorsButton, SIGNAL(clicked()),
             this, SLOT(authorsButtonClicked()));
     connect(licenseButton, SIGNAL(clicked()),
