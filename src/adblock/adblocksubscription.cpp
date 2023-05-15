@@ -255,7 +255,7 @@ void AdBlockSubscription::rulesDownloaded()
 
     QString fileName = rulesFileName();
     QFile file(fileName);
-    if (!file.open(QFile::ReadWrite)) {
+    if (!file.open(QFile::ReadWrite | QIODevice::Truncate)) {
         qWarning() << "AdBlockSubscription::" << __FUNCTION__ << "Unable to open adblock file for writing:" << fileName;
         return;
     }

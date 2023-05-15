@@ -127,13 +127,13 @@ void AdBlockDialog::updateSubscription()
 
 void AdBlockDialog::browseSubscriptions()
 {
-    QUrl url(QLatin1String("http://adblockplus.org/en/subscriptions"));
+    QUrl url(QLatin1String("https://easylist.to"));
     QDesktopServices::openUrl(url);
 }
 
 void AdBlockDialog::learnAboutWritingFilters()
 {
-    QUrl url(QLatin1String("http://adblockplus.org/en/filters"));
+    QUrl url(QLatin1String("https://adblockplus.org/en/filters"));
     QDesktopServices::openUrl(url);
 }
 

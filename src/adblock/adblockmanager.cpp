@@ -209,7 +209,7 @@ void AdBlockManager::load()
 
     QStringList defaultSubscriptions;
     defaultSubscriptions.append(QString::fromUtf8(customSubscriptionUrl().toEncoded()));
-    defaultSubscriptions.append(QLatin1String("abp:subscribe?location=http://adblockplus.mozdev.org/easylist/easylist.txt&title=EasyList"));
+    defaultSubscriptions.append(QLatin1String("abp:subscribe?location=https://easylist.to/easylist/easylist.txt&title=EasyList"));
 
     QStringList subscriptions = settings.value(QLatin1String("subscriptions"), defaultSubscriptions).toStringList();
     foreach (const QString &subscription, subscriptions) {
