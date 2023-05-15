@@ -287,10 +287,10 @@ void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError
     QMessageBox msgbox(QMessageBox::Warning,
                            QCoreApplication::applicationName() + tr(" - SSL Errors"),
                            tr("<qt>SSL Errors for: <tt>%1</tt>"
-                              "<ul><li>%2</li></ul>\n\n"
-                              "Do you want to ignore these errors?</qt>").arg(reply->url().host()).arg(errors),
+                              "<ul><li>%2</li></ul></qt>").arg(reply->url().host()).arg(errors),
                            QMessageBox::Yes | QMessageBox::No,
                            mainWindow);
+    msgbox.setInformativeText(tr("Do you want to ignore these errors?"));
     msgbox.setDefaultButton(QMessageBox::No);
     msgbox.setDetailedText(detailedText);
     msgbox.setStyleSheet("QPushButton{min-width: 175px;}");
