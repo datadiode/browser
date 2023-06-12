@@ -48,12 +48,16 @@ AdBlockManager *AdBlockManager::s_adBlockManager = 0;
 AdBlockManager::AdBlockManager(QObject *parent)
     : QObject(parent)
     , m_loaded(false)
-    , m_enabled(true)
+    , m_enabled(false)
     , m_saveTimer(new AutoSaver(this))
     , m_adBlockDialog(0)
     , m_adBlockNetwork(0)
     , m_adBlockPage(0)
 {
+    QSettings settings;
+    settings.beginGroup(QLatin1String("AdBlock"));
+    m_enabled = settings.value(QLatin1String("enabled"), m_enabled).toBool();
+
     connect(this, SIGNAL(rulesChanged()),
             m_saveTimer, SLOT(changeOccurred()));
 }
@@ -74,10 +78,6 @@ AdBlockManager *AdBlockManager::instance()
 
 bool AdBlockManager::isEnabled() const
 {
-    if (!m_loaded) {
-        AdBlockManager *that = const_cast<AdBlockManager*>(this);
-        that->load();
-    }
     return m_enabled;
 }
 
@@ -205,7 +205,6 @@ void AdBlockManager::load()
 
     QSettings settings;
     settings.beginGroup(QLatin1String("AdBlock"));
-    m_enabled = settings.value(QLatin1String("enabled"), m_enabled).toBool();
 
     QStringList defaultSubscriptions;
     defaultSubscriptions.append(QString::fromUtf8(customSubscriptionUrl().toEncoded()));
