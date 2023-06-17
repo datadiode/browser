@@ -87,7 +87,6 @@
 
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
-    , m_cacheEnabled(false)
 {
     setupUi(this);
     connect(exceptionsButton, SIGNAL(clicked()), this, SLOT(showExceptions()));
@@ -253,9 +252,14 @@ void SettingsDialog::loadFromSettings()
 
     // Network
     settings.beginGroup(QLatin1String("network"));
-    m_cacheEnabled = settings.value(QLatin1String("cacheEnabled"), true).toBool();
-    networkCache->setChecked(m_cacheEnabled);
+    networkCache->setChecked(settings.value(QLatin1String("cacheEnabled"), true).toBool());
     networkCacheMaximumSizeSpinBox->setValue(settings.value(QLatin1String("maximumCacheSize"), 50).toInt());
+    settings.endGroup();
+
+    // Idle restart
+    settings.beginGroup(QLatin1String("idleRestart"));
+    idleRestart->setChecked(settings.value(QLatin1String("enabled"), false).toBool());
+    idleRestartIntervalSpinBox->setValue(settings.value(QLatin1String("interval"), 60).toInt());
     settings.endGroup();
 
     // Proxy
@@ -405,6 +409,12 @@ void SettingsDialog::saveToSettings()
     settings.beginGroup(QLatin1String("network"));
     settings.setValue(QLatin1String("cacheEnabled"), networkCache->isChecked());
     settings.setValue(QLatin1String("maximumCacheSize"), networkCacheMaximumSizeSpinBox->value());
+    settings.endGroup();
+
+    // Idle restart
+    settings.beginGroup(QLatin1String("idleRestart"));
+    settings.setValue(QLatin1String("enabled"), idleRestart->isChecked());
+    settings.setValue(QLatin1String("interval"), idleRestartIntervalSpinBox->value());
     settings.endGroup();
 
     // proxy

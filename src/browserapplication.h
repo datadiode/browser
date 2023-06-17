@@ -68,6 +68,8 @@
 #include <qpointer.h>
 #include <qurl.h>
 #include <qdatetime.h>
+#include <qtimer.h>
+#include <qprogressdialog.h>
 
 class AutoFillManager;
 class BookmarksManager;
@@ -123,6 +125,9 @@ public:
     bool event(QEvent *event);
 #endif
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
+
 public slots:
     BrowserMainWindow *newMainWindow();
     bool restoreLastSession();
@@ -167,7 +172,15 @@ private:
 
     QUrl m_lastAskedUrl;
     QDateTime m_lastAskedUrlDateTime;
+
+    int m_userIdleLimit;
+    QTimer m_userIdleTimer;
+    QPoint m_userIdlePoint;
+    QProgressDialog *m_userIdlePopup;
 };
+
+#define SINGLE_INSTANCE_GUID L"{a046f5bf-c03c-44bc-abeb-b0d265db3007}"
+#define WM_APP_RECOVER (WM_APP + 1)
 
 #endif // BROWSERAPPLICATION_H
 

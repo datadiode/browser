@@ -25,13 +25,14 @@
 
 class SingleInstance : public QWidget
 {
+    HANDLE handle;
 public:
     bool reuse()
     {
-        static WCHAR const guid[] = L"{a046f5bf-c03c-44bc-abeb-b0d265db3007}";
-        if (CreateEventW(NULL, FALSE, FALSE, guid) && GetLastError() == ERROR_ALREADY_EXISTS) {
+        handle = CreateEventW(NULL, FALSE, FALSE, SINGLE_INSTANCE_GUID);
+        if (handle != NULL && GetLastError() == ERROR_ALREADY_EXISTS) {
             QStringList args = QCoreApplication::arguments();
-            if (HWND const hwnd = FindWindowW(NULL, guid)) {
+            if (HWND const hwnd = FindWindowW(NULL, SINGLE_INSTANCE_GUID)) {
                 if (args.count() > 1) {
                     QString url = BrowserApplication::parseArgumentUrl(args.last());
                     COPYDATASTRUCT const cds = { 0, url.count() * sizeof(QChar), url.data() };
@@ -42,7 +43,7 @@ public:
             }
             return true;
         }
-        SetWindowTextW(reinterpret_cast<HWND>(winId()), guid);
+        SetWindowTextW(reinterpret_cast<HWND>(winId()), SINGLE_INSTANCE_GUID);
         return false;
     }
     bool nativeEvent(const QByteArray &eventType, void *message, long *result)
@@ -56,6 +57,14 @@ public:
             TabWidget::OpenUrlIn tab = TabWidget::OpenUrlIn(settings.value(QLatin1String("openLinksFromAppsIn"), TabWidget::NewSelectedTab).toInt());
             settings.endGroup();
             BrowserApplication::instance()->mainWindow()->tabWidget()->loadString(url, tab);
+        } else if (msg->message == WM_APP_RECOVER) {
+            DestroyWindow(reinterpret_cast<HWND>(winId()));
+            CloseHandle(handle);
+            QString path = QCoreApplication::applicationFilePath();
+            QStringList args;
+            args.append(QLatin1String("endorphin://recover"));
+            QProcess::startDetached(path, args);
+            ::exit(3);
         }
         return false;
     }

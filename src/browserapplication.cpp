@@ -113,6 +113,8 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
     : SingleApplication(argc, argv)
     , quitting(false)
     , jscoptions(false)
+    , m_userIdleLimit(0)
+    , m_userIdlePopup(0)
 {
     QCoreApplication::setOrganizationDomain(QLatin1String("aarondewes.github.io/endorphin/"));
     QCoreApplication::setApplicationName(QLatin1String("Endorphin"));
@@ -368,12 +370,14 @@ void BrowserApplication::postLaunch()
 
         if (args.count() > 1) {
             QString argumentUrl = parseArgumentUrl(args.last());
-            switch (startup) {
-            case 2: {
+            switch (argumentUrl == "endorphin://recover" ? 3 : startup) {
+            case 2:
                 restoreLastSession();
                 mainWindow()->tabWidget()->loadString(argumentUrl, TabWidget::NewSelectedTab);
                 break;
-            }
+            case 3:
+                restoreLastSession();
+                break;
             default:
                 mainWindow()->tabWidget()->loadString(argumentUrl);
                 break;
@@ -432,6 +436,19 @@ void BrowserApplication::loadSettings()
     QWebSettings::globalSettings()->setMaximumPagesInCache(maximumPagesInCache);
 
     settings.endGroup();
+
+    settings.beginGroup(QLatin1String("idleRestart"));
+    m_userIdleLimit =
+        settings.value(QLatin1String("enabled"), false).toBool() ?
+        settings.value(QLatin1String("interval"), 60).toInt() * 60000 : 0;
+    settings.endGroup();
+
+    if (m_userIdleLimit)
+        m_userIdleTimer.start(m_userIdleLimit);
+    else
+        m_userIdleTimer.stop();
+
+    installEventFilter(this);
 }
 
 QList<BrowserMainWindow*> BrowserApplication::mainWindows()
@@ -577,6 +594,61 @@ bool BrowserApplication::event(QEvent *event)
     return QApplication::event(event);
 }
 #endif
+
+bool BrowserApplication::eventFilter(QObject *obj, QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::MouseButtonPress:
+    case QEvent::MouseButtonRelease:
+    case QEvent::MouseButtonDblClick:
+        // Keep the idle timer firing as long as the mouse doesn't move between
+        // clicks (i.e., while under long-term stability test conditions).
+        if (m_userIdlePoint == static_cast<QMouseEvent *>(event)->globalPos())
+            break;
+        m_userIdlePoint = static_cast<QMouseEvent *>(event)->globalPos();
+        // fall through
+    case QEvent::MouseMove:
+    case QEvent::KeyPress:
+    case QEvent::KeyRelease:
+        //qDebug("TIMER RESTART");
+        if (m_userIdlePopup) {
+            m_userIdlePopup->deleteLater();
+            m_userIdlePopup = NULL;
+        }
+        if (m_userIdleLimit)
+            m_userIdleTimer.start(m_userIdleLimit);
+        break;
+    case QEvent::Timer:
+        if (obj == &m_userIdleTimer) {
+            if (m_userIdlePopup == NULL) {
+                m_userIdlePopup = new QProgressDialog();
+                m_userIdlePopup->setWindowFlags(m_userIdlePopup->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+                m_userIdlePopup->setWindowTitle(tr("Maximum idle time reached"));
+                m_userIdlePopup->setLabelText(tr("Endorphin is about to restart in less than a minute"));
+                m_userIdlePopup->setCancelButton(0);
+                m_userIdlePopup->setAutoReset(false);
+                QProgressBar *bar = new QProgressBar;
+                bar->setTextVisible(false);
+                m_userIdlePopup->setBar(bar);
+                m_userIdlePopup->setRange(0, 60);
+                m_userIdleTimer.start(1000);
+            } else if (s_downloadManager && !downloadManager()->allowQuit()) {
+                m_userIdlePopup->setValue(0);
+                m_userIdleTimer.start(1000);
+            } else if (m_userIdlePopup->value() < 60) {
+                m_userIdlePopup->setValue(m_userIdlePopup->value() + 1);
+            } else {
+                m_userIdlePopup->deleteLater();
+                m_userIdlePopup = NULL;
+                mainWindow()->save(); // implies saveSession()
+                if (HWND const hwnd = FindWindowW(NULL, SINGLE_INSTANCE_GUID))
+                    PostMessageW(hwnd, WM_APP_RECOVER, 0, 0);
+            }
+        }
+        break;
+    }
+    return SingleApplication::eventFilter(obj, event);
+}
 
 void BrowserApplication::askDesktopToOpenUrl(const QUrl &url)
 {
