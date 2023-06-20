@@ -124,7 +124,7 @@ BrowserApplication::BrowserApplication(int &argc, char **argv)
 #else
     QCoreApplication::setApplicationVersion(QLatin1String("0.12.1"
 #ifdef GITVERSION
-    " (Git: " GITCHANGENUMBER " " GITVERSION ")"
+    " (Git: " GITCHANGENUMBER " \"" GITVERSION "\")"
 #endif
     ));
 #endif
@@ -274,9 +274,9 @@ void BrowserApplication::messageReceived(QLocalSocket *socket)
             socket->write(message.toUtf8());
             socket->waitForBytesWritten();
             return;
-	}
+        }
 
-       if (message.startsWith(QLatin1String("endorphin://winid"))) {
+        if (message.startsWith(QLatin1String("endorphin://winid"))) {
             QString winid = message.mid(21);
         #ifdef BROWSERAPPLICATION_DEBUG
             qDebug() << "BrowserApplication::" << __FUNCTION__ << "got win id:" << winid;

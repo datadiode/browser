@@ -20,6 +20,7 @@ find_package(Qt5Script REQUIRED)
 
 add_definitions(-DQT_NO_PRINTDIALOG)
 add_definitions(-DQT_NO_CLIPBOARD)
+add_definitions(-DQT_NO_LOCALSOCKET)
 add_definitions(-DQT_NO_LOCALSERVER)
 if(NOT Qt5UiTools_FOUND)
 	add_definitions(-DQT_NO_UITOOLS)
@@ -36,12 +37,13 @@ execute_process(COMMAND git log -n1 --pretty=format:%h
 if ("${GIT_REV}" STREQUAL "")
     set(GIT_CHANGENUMBER "")
 else()
-    execute_process(COMMAND bash -c "git log --pretty=format:%h | wc -l"
+    execute_process(COMMAND git rev-list HEAD --count
         OUTPUT_VARIABLE GIT_CHANGENUMBER)
+    math(EXPR GIT_CHANGENUMBER ${GIT_CHANGENUMBER}-1)
 endif()
 
-add_definitions(-DGITVERSION=\"\\\"${GIT_REV}\\\"\")
-add_definitions(-DGITCHANGENUMBER=${GIT_CHANGENUMBER})
+add_definitions(-DGITVERSION=\"${GIT_REV}\")
+add_definitions(-DGITCHANGENUMBER=\"${GIT_CHANGENUMBER}\")
 # Add all files
 set(Endorphin_SRCS
 	aboutdialog.cpp
@@ -87,7 +89,7 @@ set(Endorphin_SRCS
 	bookmarks/bookmarksmodel.cpp
 	bookmarks/bookmarkstoolbar.cpp
 	bookmarks/bookmarknode.cpp
-    bookmarks/xbel/xbelreader.cpp
+	bookmarks/xbel/xbelreader.cpp
 	bookmarks/xbel/xbelwriter.cpp
 	history/history.cpp
 	history/historycompleter.cpp
@@ -124,7 +126,7 @@ set(Endorphin_SRCS
 	utils/lineedit.cpp
 	utils/networkaccessmanagerproxy.cpp
 	utils/singleapplication.cpp
- 	utils/squeezelabel.cpp
+	utils/squeezelabel.cpp
 	utils/treesortfilterproxymodel.cpp
 	utils/webpageproxy.cpp
 )
@@ -186,7 +188,7 @@ set(Endorphin_MOCS
 	webview.h
 	webviewsearch.h
 )
-QT5_WRAP_CPP(MOCS ${Endorphin_MOCS})
+# QT5_WRAP_CPP(MOCS ${Endorphin_MOCS})
 
 # Translations
 # qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR}/locale/ast.ts)
@@ -223,7 +225,7 @@ QT5_WRAP_CPP(MOCS ${Endorphin_MOCS})
 # qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR}/locale/zh_TW.ts)
 
 # Generate executable
-add_executable(endorphin ${Endorphin_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS} ${QM_FILES})
+add_executable(endorphin ${Endorphin_SRCS} ${UIS} ${RSCS} ${TRS} ${Endorphin_MOCS} ${QM_FILES})
 qt5_use_modules(endorphin Widgets)
 qt5_use_modules(endorphin Core)
 qt5_use_modules(endorphin Gui)

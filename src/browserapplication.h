@@ -142,7 +142,7 @@ public slots:
 
 private slots:
     void retranslate();
-#ifndef QT_NO_LOCALSERVER
+#ifndef QT_NO_LOCALSOCKET
     void messageReceived(QLocalSocket *socket);
 #endif
     void postLaunch();
