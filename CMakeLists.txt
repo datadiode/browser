@@ -1,5 +1,5 @@
 project(Endorphin)
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.12)
 
 set(QT_MOC_EXECUTABLE "C:/Qt/Qt5.5.1/msvc2013_32/bin/moc.exe")
 add_executable(Qt5::moc IMPORTED)
