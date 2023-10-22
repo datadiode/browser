@@ -38,7 +38,9 @@
 #include <qnetworkrequest.h>
 #include <qsettings.h>
 #include <qwebframe.h>
+#if !defined(QT_NO_UITOOLS)
 #include <QUiLoader>
+#endif
 
 #include <qwebelement.h>
 
