@@ -3,6 +3,6 @@
     <ShortName>Google</ShortName>
     <Description>Google Web Search</Description>
     <Url method="get" type="text/html" template="https://www.google.com/search?hl={language}&amp;q={searchTerms}" />
-    <Url method="get" type="application/x-suggestions+json" template="https://suggestqueries.google.com/complete/search?json=t&amp;hl={language}&amp;q={searchTerms}&amp;nolabels=t" />
+    <Url method="get" type="application/x-suggestions+json" template="https://www.google.com/complete/search?output=chrome&amp;hl={language}&amp;q={searchTerms}" />
     <Image width="16" height="16">http://www.google.com/favicon.ico</Image>
 </OpenSearchDescription>

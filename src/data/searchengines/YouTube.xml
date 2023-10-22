@@ -3,6 +3,6 @@
     <ShortName >YouTube</ShortName>
     <Description >YouTube</Description>
     <Url method="get" type="text/html" template="https://www.youtube.com/results?search_query={searchTerms}&amp;search=Search" />
-    <Url method="get" type="application/x-suggestions+json" template="https://suggestqueries.google.com/complete/search?ds=yt&amp;json=t&amp;hl={language}&amp;q={searchTerms}&amp;nolabels=t" />
+    <Url method="get" type="application/x-suggestions+json" template="https://www.google.com/complete/search?output=chrome&amp;ds=yt&amp;hl={language}&amp;q={searchTerms}" />
     <Image width="16" height="16">http://www.youtube.com/favicon.ico</Image>
 </OpenSearchDescription>
