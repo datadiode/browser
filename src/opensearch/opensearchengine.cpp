@@ -28,7 +28,8 @@
 #include <qnetworkreply.h>
 #include <qregexp.h>
 #include <qstringlist.h>
-#include <QScriptEngine>
+#include <QJsonDocument>
+#include <QJsonArray>
 #include <QUrlQuery>
 
 /*!
@@ -87,7 +88,6 @@ OpenSearchEngine::OpenSearchEngine(QObject *parent)
     , m_suggestionsMethod(QLatin1String("get"))
     , m_networkAccessManager(0)
     , m_suggestionsReply(0)
-    , m_scriptEngine(0)
     , m_delegate(0)
 {
     m_requestMethods.insert(QLatin1String("get"), QNetworkAccessManager::GetOperation);
@@ -99,8 +99,6 @@ OpenSearchEngine::OpenSearchEngine(QObject *parent)
 */
 OpenSearchEngine::~OpenSearchEngine()
 {
-    if (m_scriptEngine)
-        m_scriptEngine->deleteLater();
 }
 
 QString OpenSearchEngine::parseTemplate(const QString &searchTerm, const QString &searchTemplate)
@@ -529,8 +527,7 @@ void OpenSearchEngine::requestSearchResults(const QString &searchTerm)
 
 void OpenSearchEngine::suggestionsObtained()
 {
-    QString response(QString::fromUtf8(m_suggestionsReply->readAll()));
-    response = response.trimmed();
+    QByteArray const response = m_suggestionsReply->readAll();
 
     m_suggestionsReply->close();
     m_suggestionsReply->deleteLater();
@@ -539,23 +536,12 @@ void OpenSearchEngine::suggestionsObtained()
     if (response.isEmpty())
         return;
 
-    if (!response.startsWith(QLatin1Char('[')) || !response.endsWith(QLatin1Char(']')))
+    // Evaluate the JSON response using QJsonDocument.
+    QJsonDocument const document = QJsonDocument::fromJson(response);
+    if (!document.isArray())
         return;
 
-    if (!m_scriptEngine)
-        m_scriptEngine = new QScriptEngine();
-
-    // Evaluate the JSON response using QtScript.
-    if (!m_scriptEngine->canEvaluate(response))
-        return;
-
-    QScriptValue responseParts = m_scriptEngine->evaluate(response);
-
-    if (!responseParts.property(1).isArray())
-        return;
-
-    QStringList suggestionsList;
-    qScriptValueToSequence(responseParts.property(1), suggestionsList);
+    QStringList const suggestionsList = document.toVariant().toStringList();
 
     emit suggestions(suggestionsList);
 }

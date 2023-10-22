@@ -135,8 +135,6 @@ private:
     QNetworkAccessManager *m_networkAccessManager;
     QNetworkReply *m_suggestionsReply;
 
-    QScriptEngine *m_scriptEngine;
-
     OpenSearchEngineDelegate *m_delegate;
 };
 
