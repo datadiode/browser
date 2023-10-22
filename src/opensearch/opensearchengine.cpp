@@ -541,7 +541,12 @@ void OpenSearchEngine::suggestionsObtained()
     if (!document.isArray())
         return;
 
-    QStringList const suggestionsList = document.toVariant().toStringList();
+    // https://stackoverflow.com/questions/4935302/autocomplete-in-opensearch
+    QJsonArray array = document.array();
+    if (array.count() < 2)
+       return;
+
+    QStringList const suggestionsList = array[1].toVariant().toStringList();
 
     emit suggestions(suggestionsList);
 }
