@@ -89,6 +89,9 @@ qwindows.dll
 <comment id="imageformats">
 qwebp.dll qdds.dll qgif.dll qicns.dll qico.dll qjpeg.dll qmng.dll qtga.dll qwbmp.dll qwebp.dll
 </comment>
+<comment id="mediaservice">
+ffmpeg-plugin.dll dsengine.dll
+</comment>
 <script type="text/vbs">
 Option Explicit
 
@@ -136,6 +139,16 @@ Function MakeShellLink(path)
 	MakeShellLink = Len(path) & "#" & path
 End Function
 
+Function PreferPlugin(name)
+	Dim check
+	Set check = document.getElementById(name)
+	If check Is Nothing Then
+		PreferPlugin = True
+	Else
+		PreferPlugin = check.checked
+	End If
+End Function
+
 Sub CreateAddon_OnClick
 	Dim i, frame, line, path, file, name
 	CreateFolder(AddOnFolder)
@@ -166,6 +179,15 @@ Sub CreateAddon_OnClick
 						fso.CopyFile home & "\" & frame.frameElement.name & "\imageformats\" & name, path & "\"
 					Next
 				End If
+				path = AddOnFolder & "\" & AddOnName & "\" & frame.frameElement.name & "\mediaservice"
+				If CreateFolder(path) Then
+					For Each name In splitAtWhitespace.Execute(mediaservice.text)
+						If fso.FileExists(home & "\" & frame.frameElement.name & "\mediaservice\" & name) And PreferPlugin(name) Then
+							fso.CopyFile home & "\" & frame.frameElement.name & "\mediaservice\" & name, path & "\"
+							Exit For
+						End If
+					Next
+				End If
 			End If
 			path = AddOnFolder & "\" & AddOnName & "\" & fso.GetFileName(frame.frameElement.src)
 			Set file = fso.CreateTextFile(path, True)
@@ -184,6 +206,12 @@ Sub CreateAddon_OnClick
 					Next
 					For Each name In splitAtWhitespace.Execute(imageformats.text)
 						file.WriteLine "\" & frame.frameElement.name & "\imageformats\" & name & " > \flash\AddOn\Endorphin\imageformats\ #NO"
+					Next
+					For Each name In splitAtWhitespace.Execute(mediaservice.text)
+						If fso.FileExists(home & "\" & frame.frameElement.name & "\mediaservice\" & name) And PreferPlugin(name) Then
+							file.WriteLine "\" & frame.frameElement.name & "\mediaservice\" & name & " > \flash\AddOn\Endorphin\mediaservice\ #NO"
+							Exit For
+						End If
 					Next
 					If AddDesktopLink.checked Then file.WriteLine "\Common\endorphin.lnk > \Windows\Desktop\ #NO"
 					If AddToStartMenu.checked Then file.WriteLine "\Common\endorphin.lnk > \Windows\Programs\ #NO"
@@ -245,6 +273,8 @@ End Sub
 <input id="AddDesktopLink" type="checkbox" checked>on desktop</label>
 <label for="AddToStartMenu" title="This option adds the application to the start menu">
 <input id="AddToStartMenu" type="checkbox" checked>in start menu</label>
+<label for="ffmpeg-plugin.dll" title="This option installs the ffmpeg-plugin.dll instead of the dsengine.dll, if available for the platform">
+<input id="ffmpeg-plugin.dll" type="checkbox">ffmpeg plugin</label>
 <button id="ShowLicense" title="GPL-2.0-or-later">&#9878; Show License</button>
 </div>
 <a href="#nowhere" unselectable="on" onclick="vbs:wsh.Run(Me.innerText)">https://github.com/datadiode/browser</a>
