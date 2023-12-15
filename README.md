@@ -18,9 +18,8 @@ If you want to contribute, feel free to open an issue or a PR.
 
 ### Building
 
-<sup>Disclaimer: Applies to upstream version &ndash; Windows CE makes things a lot more complicated and also involves [SfQtWebKit](https://github.com/datadiode/SfQtWebKit) and [ICU4C](https://github.com/datadiode/icu4c).</sup>  
-Endorphin uses the cmake build system.  If you already have Qt 5.14 or newer on your system building is as easy as running the command 'cmake' and then 'make'.
-For more detailed information see the [Building guide](BUILDING.md).
+Endorphin uses the cmake build system. This fork of Endorphin is imported as a submodule into [SfQtWebKit](https://github.com/datadiode/SfQtWebKit), where it takes part in the Appveyor build.
+I cannot give reproducible instructions on how to set up a local build environment.  Everything is scripted into the Appveyor build, which serves as the reference build environment.
 
 #### Endorphin on HMI panel running WEC2013
 
